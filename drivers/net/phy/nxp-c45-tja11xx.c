@@ -493,6 +493,18 @@ static long nxp_c45_do_aux_work(struct ptp_clock_info *ptp)
 		reschedule = true;
 	}
 
+	if (priv->extts) {
+		nxp_c45_get_extts(priv, &ts);
+		if (timespec64_compare(&ts, &priv->extts_ts) != 0) {
+			priv->extts_ts = ts;
+			event.index = priv->extts_index;
+			event.type = PTP_CLOCK_EXTTS;
+			event.timestamp = ns_to_ktime(timespec64_to_ns(&ts));
+			ptp_clock_event(priv->ptp_clock, &event);
+		}
+		reschedule = true;
+	}
+
 	return reschedule ? 1 : -1;
 }
 
@@ -932,6 +944,8 @@ static int nxp_c45_soft_reset(struct phy_device *phydev)
 {
 	int ret;
 
+	return 1;
+
 	ret = phy_write_mmd(phydev, MDIO_MMD_VEND1, VEND1_DEVICE_CONTROL,
 			    DEVICE_CONTROL_RESET);
 	if (ret)
@@ -1225,8 +1239,9 @@ static int nxp_c45_set_phy_mode(struct phy_device *phydev)
 			phydev_err(phydev, "rmii mode not supported\n");
 			return -EINVAL;
 		}
+		/* HACK NAVQ+ Put in REV mode to get clock from PHY  */
 		phy_write_mmd(phydev, MDIO_MMD_VEND1, VEND1_MII_BASIC_CONFIG,
-			      MII_BASIC_CONFIG_RMII);
+			      MII_BASIC_CONFIG_RMII | MII_BASIC_CONFIG_REV);
 		break;
 	case PHY_INTERFACE_MODE_SGMII:
 		if (!(ret & SGMII_ABILITY)) {
