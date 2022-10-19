@@ -70,14 +70,6 @@ int genphy_c45_pma_suspend(struct phy_device *phydev)
 }
 EXPORT_SYMBOL_GPL(genphy_c45_pma_suspend);
 
-int genphy_c45_loopback(struct phy_device *phydev, bool enable)
-{
-	return phy_modify_mmd(phydev, MDIO_MMD_PCS, MDIO_CTRL1,
-			      MDIO_PCS_CTRL1_LOOPBACK,
-			      enable ? MDIO_PCS_CTRL1_LOOPBACK : 0);
-}
-EXPORT_SYMBOL_GPL(genphy_c45_loopback);
-
 /**
  * genphy_c45_pma_baset1_setup_master_slave - configures forced master/slave
  * role of BaseT1 devices.
