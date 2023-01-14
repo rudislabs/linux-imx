@@ -125,7 +125,7 @@
 		pinctrl-0 = <&pinctrl_typec_mux>;
 		switch-gpios = <&gpio3 21 GPIO_ACTIVE_HIGH>;
 		orientation-switch;
-		status = "disabled";
+		status = "okay";
 
 		port {
 			usb3_data_ss: endpoint {
@@ -732,7 +732,7 @@
                 reg = <0x51>;
                 interrupt-parent = <&gpio4>;
                 interrupts = <28 8>;
-                status = "disabled";
+                status = "okay";
 
                 port {
                         typec_dr_sw: endpoint {
