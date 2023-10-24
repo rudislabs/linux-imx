@@ -227,6 +227,7 @@ struct nxp_c45_phy {
 	int extts_index;
 	bool extts;
 	bool broken_soft_reset;
+	bool rmii_rev_mode;
 };
 
 struct nxp_c45_phy_stats {
@@ -1180,6 +1181,12 @@ static int nxp_c45_get_delays(struct phy_device *phydev)
 	return 0;
 }
 
+static int nxp_c45_rmii_config(struct phy_device *phydev)
+{
+	struct nxp_c45_phy *priv = phydev->priv;
+	return priv->rmii_rev_mode ? MII_BASIC_CONFIG_REV : 0;
+}
+
 static int nxp_c45_set_phy_mode(struct phy_device *phydev)
 {
 	int ret;
@@ -1234,7 +1241,7 @@ static int nxp_c45_set_phy_mode(struct phy_device *phydev)
 			return -EINVAL;
 		}
 		phy_write_mmd(phydev, MDIO_MMD_VEND1, VEND1_MII_BASIC_CONFIG,
-			      MII_BASIC_CONFIG_RMII);
+			      MII_BASIC_CONFIG_RMII | nxp_c45_rmii_config(phydev));
 		break;
 	case PHY_INTERFACE_MODE_SGMII:
 		if (!(ret & SGMII_ABILITY)) {
@@ -1342,6 +1349,8 @@ static int nxp_c45_probe(struct phy_device *phydev)
 
 	if (of_property_read_bool(phydev->mdio.dev.of_node, "nxp,broken-soft-reset"))
 		priv->broken_soft_reset = true;
+	if (of_property_read_bool(phydev->mdio.dev.of_node, "nxp,rmii-rev-mode"))
+		priv->rmii_rev_mode = true;
 
 no_ptp_support:
 
