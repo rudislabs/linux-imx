@@ -937,6 +937,7 @@ properties:
               - dh,imx8mp-dhcom-som       # i.MX8MP DHCOM SoM
               - dh,imx8mp-dhcom-pdk2      # i.MX8MP DHCOM SoM on PDK2 board
               - fsl,imx8mp-evk            # i.MX8MP EVK Board
+              - fsl,imx8mp-navq           # i.MX8MP NAVQ+ Board
               - gateworks,imx8mp-gw74xx   # i.MX8MP Gateworks Board
               - toradex,verdin-imx8mp     # Verdin iMX8M Plus Modules
               - toradex,verdin-imx8mp-nonwifi  # Verdin iMX8M Plus Modules without Wi-Fi / BT
