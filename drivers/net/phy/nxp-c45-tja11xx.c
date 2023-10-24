@@ -16,6 +16,7 @@
 #include <linux/ptp_classify.h>
 #include <linux/ptp_clock_kernel.h>
 #include <linux/net_tstamp.h>
+#include <linux/of.h>
 
 #define PHY_ID_TJA_1103			0x001BB010
 
@@ -225,6 +226,7 @@ struct nxp_c45_phy {
 	struct timespec64 extts_ts;
 	int extts_index;
 	bool extts;
+	bool broken_soft_reset;
 };
 
 struct nxp_c45_phy_stats {
@@ -930,12 +932,18 @@ static irqreturn_t nxp_c45_handle_interrupt(struct phy_device *phydev)
 
 static int nxp_c45_soft_reset(struct phy_device *phydev)
 {
+	struct nxp_c45_phy *priv = phydev->priv;
 	int ret;
+
+	if (priv->broken_soft_reset)
+		return 0;
 
 	ret = phy_write_mmd(phydev, MDIO_MMD_VEND1, VEND1_DEVICE_CONTROL,
 			    DEVICE_CONTROL_RESET);
+
 	if (ret)
 		return ret;
+
 
 	return phy_read_mmd_poll_timeout(phydev, MDIO_MMD_VEND1,
 					 VEND1_DEVICE_CONTROL, ret,
@@ -1331,6 +1339,9 @@ static int nxp_c45_probe(struct phy_device *phydev)
 	} else {
 		phydev_dbg(phydev, "PTP support not enabled even if the phy supports it");
 	}
+
+	if (of_property_read_bool(phydev->mdio.dev.of_node, "nxp,broken-soft-reset"))
+		priv->broken_soft_reset = true;
 
 no_ptp_support:
 
