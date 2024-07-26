@@ -633,7 +633,14 @@ static const struct reg_value ov5640_init_setting[] = {
 };
 
 static const struct reg_value ov5640_init_supertek[] = {
-	{0x518a, 0x34, 0, 0},
+	{0x5189, 0x75, 0, 0},
+	{0x518a, 0x54, 0, 0},
+	{0x518b, 0xe0, 0, 0},
+	{0x518c, 0xb2, 0, 0},
+	{0x518d, 0x42, 0, 0},
+	{0x518e, 0x3d, 0, 0},
+	{0x518f, 0x56, 0, 0},
+	{0x5190, 0x46, 0, 0},
 };
 
 static const struct reg_value ov5640_setting_low_res[] = {
